@@ -7,15 +7,22 @@ import './index.css';
 import LoginModel from './models/LoginModel';
 import RegisterModel from './models/RegisterModel';
 import DashboardModel from './models/DashboardModel';
+import MyVocabModel from './models/MyVocabModel';
 import StudyModel from './models/StudyModel';
-import ManagementModel from './models/ManagementModel';
+import VocabSetting from './models/VocabSettingModel';
+
 import AuthRoute from './components/AuthRoute';
 import { PublicHeader, PublicFooter } from './components/PublicComponents';
 import LoginPageComponent from './components/LoginPageComponent';
 import RegisterPageComponent from './components/RegisterPageComponent';
 import DashboardPageComponent from './components/DashboardPageComponent';
-import ManagementPageComponent from './components/ManagementPageComponent';
 import StudyPageComponent from './components/StudyPageComponent';
+import StudyMorePageComponent from './components/StudyMorePageComponent';
+import VocabProgressPageCompoent from './components/VocabProgressPageComponent';
+import SettingPageComponent from './components/SettingPageComponent';
+import VocabBookComponent from './components/VocabBookComponent';
+import MyVocabComponent from './components/MyVocabPageComponent';
+import VocabDetailComponent from './components/VocabDetailPageComponent';
 
 const { Content } = Layout;
 
@@ -26,18 +33,34 @@ const app = dva({
 app.model(LoginModel);
 app.model(RegisterModel);
 app.model(DashboardModel);
+app.model(MyVocabModel);
 app.model(StudyModel);
-app.model(ManagementModel);
+app.model(VocabSetting);
 
 const LoginPage = connect(state => { return {}; })(LoginPageComponent);
 const RegisterPage = connect(state => { return {}; })(RegisterPageComponent);
 const DashboardPage = connect(state => { return {
     ...state.dashboard
 }; })(DashboardPageComponent);
-const ManagementPage = connect(state => { return {}; })(ManagementPageComponent);
-const StudyPage = connect(state => {return {
-    ...state.study
-}; })(StudyPageComponent);
+const StudyPage = connect(state => {
+    return {dataSource:state.study.vocabDetail};
+})(StudyPageComponent);
+const StudyMorePage = connect(state => {
+    return {dataSource:state.study.vocabDetail};
+})(StudyMorePageComponent);
+const VocabDetail = connect(state => {
+    return {vocabDetail: state.study.vocabDetail};
+})(VocabDetailComponent);
+const VocabProgressPage = connect(state => {
+    return {dataSource: state.vocabsetting.vocabNum, bookName: state.vocabsetting.bookName};
+})(VocabProgressPageCompoent);
+const Setting = connect(state => { return {}; })(SettingPageComponent);
+const VocabBook = connect(state => {
+    return {bookName: state.vocabsetting.bookName, bookIntro: state.vocabsetting.bookIntro, dataSource: state.vocabsetting.vocabBook};
+})(VocabBookComponent);
+const MyVocab = connect(state => {
+    return {dataSource: state.myvocab.dataSource};
+})(MyVocabComponent);
 
 app.router(({ history }) => (
     <Router history={history}>
@@ -48,9 +71,16 @@ app.router(({ history }) => (
                     <Route path="/" exact render={() => <Redirect to="/login" />} />
                     <Route path="/login" component={LoginPage} />
                     <Route path="/register" component={RegisterPage} />
+
                     <AuthRoute path="/dashboard" component={DashboardPage} />
                     <AuthRoute path="/study" component={StudyPage} />
-                    <AuthRoute path="/management" component={ManagementPage} />
+                    <AuthRoute path="/studyMore" component={StudyMorePage} />
+                    <AuthRoute path="/vocabDetail" component={VocabDetail} />
+                    <AuthRoute path="/vocabProgress" component={VocabProgressPage} />
+                    <AuthRoute path="/setting" component={Setting} />
+                    <AuthRoute path="/vocabBook" component={VocabBook} />
+                    <AuthRoute path="/myVocab" component={MyVocab} />
+
                 </Switch>
             </Content>
             <PublicFooter />

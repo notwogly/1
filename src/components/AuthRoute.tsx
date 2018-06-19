@@ -17,16 +17,17 @@ export default class AuthRoute extends Component<AuthRouteProps> {
                 path={this.props.path}
                 exact={this.props.exact || false}
                 render={(props) =>
-                    isAuthed() ? (
-                        <div><Component {...props} /></div>
-                    ) : (
-                            <Redirect
-                                to={{
-                                    pathname: '/',
-                                    state: { from: props.location }
-                                }}
-                            />
-                        )
+                    <div><Component {...props} /></div>
+                    // isAuthed() ? (
+                    //     <div><Component {...props} /></div>
+                    // ) : (
+                    //         <Redirect
+                    //             to={{
+                    //                 pathname: '/',
+                    //                 state: { from: props.location }
+                    //             }}
+                    //         />
+                    //     )
                 }
             />
         )

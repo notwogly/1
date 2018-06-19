@@ -1,7 +1,8 @@
-import {Component, FormEvent, ReactNode} from 'react';
+import {Component, FormEvent} from 'react';
 import * as React from 'react';
 import {Icon, Form, Button, Input, message} from 'antd';
 import DvaProps from '../types/DvaProps';
+import { Link } from 'dva/router';
 
 const FormItem = Form.Item;
 
@@ -43,7 +44,7 @@ export class LoginForm extends Component<FormProps, LoginFormData> {
             },
         };
         return (
-            <Form onSubmit={this.handleSubmit}>
+            <Form onSubmit={this.handleSubmit} style={{textAlign: 'center', marginTop: '100px'}}>
                 <FormItem label="邮箱" {...formItemLayout} hasFeedback>
                     {
                         getFieldDecorator('email', {
@@ -68,6 +69,9 @@ export class LoginForm extends Component<FormProps, LoginFormData> {
                 </FormItem>
                 <FormItem {...formItemLayout}>
                     <Button icon="copy" type="primary" htmlType="submit">登录</Button>
+                </FormItem>
+                <FormItem {...formItemLayout}>
+                    <Button><Link to="/register">注册新用户</Link></Button>
                 </FormItem>
             </Form>
         );

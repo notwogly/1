@@ -3,28 +3,26 @@ import * as React from 'react';
 import { Icon, Form, Button, Input, message, Progress } from 'antd';
 import DvaProps from '../types/DvaProps';
 import { Row, Col } from 'antd';
+import { Link } from 'dva/router';
 import {NavigationBar} from './PublicComponents';
 
-interface StudyProps extends DvaProps {
+interface StudyMoreProps extends DvaProps {
     dataSource: any;
+    location: any;
 }
 
-export  default class StudyComponent extends Component<StudyProps> {
+export  default class StudyComponent extends Component<StudyMoreProps> {
     constructor(props) {
         super(props);
-        this.handleSubmit1 = this.handleSubmit1.bind(this);
-        this.handleSubmit2 = this.handleSubmit2.bind(this);
+        console.log(this.props.location.query);
+        this.props.dispatch({type: "study/getVocabDetail", payload: this.props.location.query})
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit1 = (e) => {
+    handleSubmit(e) {
         e.preventDefault();
         this.props.dispatch({type:'study/jumpDetail',payload:'activity'});
-    }
-
-    handleSubmit2 = (e) => {
-        e.preventDefault();
-        this.props.dispatch({type:'study/jumpMore',payload:'activity'});
-    }
+    };
 
     render() {
         return (
@@ -37,26 +35,24 @@ export  default class StudyComponent extends Component<StudyProps> {
                         </Col>
                     </Row>
                     <Row type="flex" justify="center" style={{ margin: '12px' }}>
-                        {/*<Link to="vocabDetail">*/}
-                            {/*<Button*/}
-                                {/*icon="check"*/}
-                                {/*htmlType="submit"*/}
-                                {/*style={{width: '200px'}}>认识*/}
-                            {/*</Button>*/}
-                        {/*</Link>*/}
+                        <Col>
+                            <div style={{ textAlign: 'center'}}><span>例句： </span>{this.props.dataSource.exampleSen}</div>
+                        </Col>
+                    </Row>
+                    <Row type="flex" justify="center" style={{ margin: '12px' }}>
                         <Col><Button
-                                icon="check"
-                                htmlType="submit"
-                                style={{width: '200px'}}
-                                onClick={this.handleSubmit1}>认识
-                            </Button></Col>
+                            icon="check"
+                            htmlType="submit"
+                            style={{width: '200px'}}
+                            onClick={this.handleSubmit}>认识了
+                        </Button></Col>
                     </Row>
                     <Row type="flex" justify="center" style={{ margin: '12px' }}>
                         <Col style={{marginBottom: '10px'}}><Button
                                 icon="cross"
                                 htmlType="submit"
                                 style={{width: '200px'}}
-                                onClick={this.handleSubmit2}>不认识
+                                onClick={this.handleSubmit}>依旧不认识
                             </Button></Col>
                     </Row>
                     <Row type="flex" justify="center" style={{ margin: '12px' }}>

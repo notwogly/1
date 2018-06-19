@@ -43,7 +43,7 @@ export default class RegisterForm extends Component<FormProps, RegisterFormData>
             },
         };
         return (
-            <Form onSubmit={this.handleSubmit}>
+            <Form style={{marginTop: '100px', textAlign: 'center'}} onSubmit={this.handleSubmit}>
                 <FormItem label="邮箱" {...formItemLayout} hasFeedback>
                     {
                         getFieldDecorator('email', {

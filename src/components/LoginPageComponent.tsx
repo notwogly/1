@@ -9,9 +9,6 @@ export default class LoginPageComponent extends Component<{ dispatch: any }> {
         return (
             <div>
                 <WrappedLoginForm dispatch={this.props.dispatch} />
-                <div style={{ minHeight: '200px' }}>
-                    <Button><Link to="/register">注册新用户</Link></Button>
-                </div>
             </div>
         );
     }
