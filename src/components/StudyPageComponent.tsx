@@ -1,32 +1,59 @@
 import { Component, FormEvent, ReactNode } from 'react';
 import * as React from 'react';
-import { Icon, Form, Button, Input, message, Progress } from 'antd';
+import { Button, Modal, Progress } from 'antd';
 import DvaProps from '../types/DvaProps';
 import { Row, Col } from 'antd';
 import {NavigationBar} from './PublicComponents';
 
 interface StudyProps extends DvaProps {
     dataSource: any;
+    studyVocabNum: number;
+    dailyNum: number;
 }
 
-export  default class StudyComponent extends Component<StudyProps> {
+interface ViewState {
+    modalState: boolean;
+    refresh: boolean;
+}
+
+var studyNum = -1;
+export  default class StudyComponent extends Component<StudyProps, ViewState> {
     constructor(props) {
         super(props);
+        this.state = {
+            modalState: false,
+            refresh : false,
+        }
+        this.props.dispatch({type:'mysetting/getVocabSetting',payload:''});
         this.handleSubmit1 = this.handleSubmit1.bind(this);
         this.handleSubmit2 = this.handleSubmit2.bind(this);
+        this.handleOk = this.handleOk.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
     }
 
     handleSubmit1 = (e) => {
         e.preventDefault();
-        this.props.dispatch({type:'study/jumpDetail',payload:'activity'});
+        this.props.dispatch({type:'study/addStudyVocabNum',payload: (studyNum+1)});
+        this.props.dispatch({type:'study/jumpDetail',payload: {word:this.props.dataSource.word, vocabState: true}});
     }
 
     handleSubmit2 = (e) => {
         e.preventDefault();
-        this.props.dispatch({type:'study/jumpMore',payload:'activity'});
+        this.setState({modalState: true,});
     }
 
+    handleOk() {
+        this.setState({modalState: false,});
+        this.props.dispatch({type:'study/jumpDetail',payload:{word:this.props.dataSource.word, vocabState: true}});
+    };
+
+    handleCancel(e) {
+        this.setState({modalState: false,});
+        this.props.dispatch({type:'study/jumpDetail',payload: {word:this.props.dataSource.word, vocabState: false}});
+    };
+
     render() {
+        studyNum = this.props.studyVocabNum;
         return (
             <div>
                 <NavigationBar current={"study"} dispatch={this.props.dispatch}/>
@@ -36,14 +63,20 @@ export  default class StudyComponent extends Component<StudyProps> {
                             <div style={{ textAlign: 'center',fontSize: '100px', color: 'Navy' }}>{this.props.dataSource.word}</div>
                         </Col>
                     </Row>
+                    <Modal title="例句" visible={this.state.modalState}
+                           onOk={this.handleOk} onCancel={this.handleCancel}
+                           footer={[
+                               <Button key="backDetail" type="ghost" size="large" onClick={this.handleCancel}>还是不知道</Button>,
+                               <Button key="known" type="primary" size="large" onClick={this.handleOk}>我知道了</Button>,
+                           ]}
+                    >
+                        <Row type="flex" justify="center" style={{ margin: '12px' }}>
+                            <Col>
+                                <div style={{fontSize: '30px', textAlign: 'center'}}>{this.props.dataSource.exampleSen}</div>
+                            </Col>
+                        </Row>
+                    </Modal>
                     <Row type="flex" justify="center" style={{ margin: '12px' }}>
-                        {/*<Link to="vocabDetail">*/}
-                            {/*<Button*/}
-                                {/*icon="check"*/}
-                                {/*htmlType="submit"*/}
-                                {/*style={{width: '200px'}}>认识*/}
-                            {/*</Button>*/}
-                        {/*</Link>*/}
                         <Col><Button
                                 icon="check"
                                 htmlType="submit"
@@ -62,7 +95,7 @@ export  default class StudyComponent extends Component<StudyProps> {
                     <Row type="flex" justify="center" style={{ margin: '12px' }}>
                         <Col style={{marginBottom: '30px', marginTop: '30px'}}>
                             <div style={{ textAlign: 'center'}}>学习进度: </div>
-                            <div><Progress percent={70} style={{width: '300px'}}/></div>
+                            <div><Progress percent={studyNum*100/this.props.dailyNum} style={{width: '300px'}}/></div>
                         </Col>
                     </Row>
                     <br/>

@@ -41,7 +41,7 @@ const MyVocabModel = {
             return;
         },
         * vocabBook(payload: {payload: boolean}, {call, put}) {
-            console.log('this is the vocabBook');
+            //console.log('this is the vocabBook');
             yield put({
                 type: 'updateVocabBookInfo',
                 payload: {bookName: '六级词汇', bookIntro:'关于六级的词汇书'}

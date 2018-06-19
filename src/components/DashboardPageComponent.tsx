@@ -3,6 +3,12 @@ import { Component } from 'react';
 import { Layout, Row, Col, Button, Carousel, Progress } from 'antd';
 import { Link } from 'dva/router';
 import {NavigationBar} from "./PublicComponents";
+import DvaProps from "../types/DvaProps";
+
+export interface DashBoardProps extends DvaProps {
+    vocabNum: any;
+
+}
 
 export default class DashboardPageComponent extends Component<any> {
     render() {

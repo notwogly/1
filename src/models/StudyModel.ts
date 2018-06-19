@@ -4,9 +4,10 @@ const MyVocabModel = {
     namespace: 'study',
     state: {
         vocabDetail:{id: '', word: 'acti',interpretation: 'afa', exampleSen:'vvfs'},
+        studyVocabNum: 60,
     },
     reducers: {
-        updateStudyInfo(st, payload) {
+        updateStudyVocabNum(st, payload) {
             return {...st, ...payload.payload};
         },
         updateVocabDetail(st, payload) {
@@ -18,6 +19,7 @@ const MyVocabModel = {
             return history.listen(({pathname}) => {
                 if (pathname === '/study') {
                     dispatch({ type: 'getVocabDetail', payload: '' });
+                    dispatch({ type: 'getStudyVocabNum', payload: false});
                 }
             });
         }
@@ -30,16 +32,32 @@ const MyVocabModel = {
             });
             return;
         },
-        * jumpDetail(payload: { payload: string }, {call, put}) {
-            console.log(payload.payload);
-            //fetch the data of the case and add to the query
-            yield put(routerRedux.push({pathname:'/vocabDetail',query: payload.payload,}));
+        * getStudyVocabNum(payload: {payload: boolean}, {call, put}) {
+            yield put({
+                type: 'updateStudyVocabNum',
+                payload: {studyVocabNum: 12,}
+            });
             return;
         },
-        * jumpMore(payload: { payload: string }, {call, put}) {
+        * addStudyVocabNum(payload: {payload: number}, {call, put}) {
+            yield put({
+                type: 'updateStudyVocabNum',
+                payload: {studyVocabNum: payload.payload,}
+            });
+            return;
+        },
+        * jumpDetail(payload: { payload: { word:string, vocabState: boolean}}, {call, put}) {
             console.log(payload.payload);
             //fetch the data of the case and add to the query
-            yield put(routerRedux.push({pathname:'/studyMore',query: payload.payload,}));
+            if(payload.payload.vocabState)
+            {
+                //如果这个单词标记为认识
+            }
+            else
+            {
+                //如果这个单词标记为不认识
+            }
+            yield put(routerRedux.push({pathname:'/vocabDetail',query: payload.payload,}));
             return;
         },
     }

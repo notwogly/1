@@ -1,28 +1,34 @@
 import { Component, FormEvent, ReactNode } from 'react';
 import * as React from 'react';
-import { Form, Input, Button, Select, Checkbox, Radio, Tooltip, Icon,} from 'antd';
+import { Form, Input, Button, Select, message, Radio, Tooltip, Icon,} from 'antd';
 import DvaProps from '../types/DvaProps';
 import { Link } from 'dva/router';
-
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
+const success = function () {
+    message.success('修改每日学习量成功');
+};
 
-interface SettingFormProps extends DvaProps {
+export interface SettingFormProps extends DvaProps {
     form: any;
-    dataSource: any;
+    userInfo: any;
+    bookName: any;
+    dailyNum: any;
 }
 
 export  class VocabSettingForm extends Component<SettingFormProps> {
     constructor(props) {
         super(props);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.props.dispatch({type: 'vocabsetting/vocabBook', payload: true});
     }
 
-    handleSubmit(e) {
-        e.preventDefault();
-        console.log('收到表单值：', this.props.form.getFieldsValue());
+    handleChange(value) {
+        console.log(value);
+        this.props.dispatch({type: 'mysetting/modifyDailyNum', payload: value});
+        success();
     };
 
     render() {
@@ -33,21 +39,21 @@ export  class VocabSettingForm extends Component<SettingFormProps> {
         };
         return (
             <div>
-                <Form layout={"horizontal"} onSubmit={this.handleSubmit} style={{margin: 'auto'}}>
+                <Form layout={"horizontal"} style={{margin: 'auto'}}>
                     <FormItem
                         {...formItemLayout}
                         label="正在学习： "
                         style={{marginTop:'30px'}}
                     >
-                        <p className="ant-form-text" id="bookName">六级词汇</p>
+                        <p className="ant-form-text" id="bookName">{this.props.bookName}</p>
                     </FormItem>
                     <FormItem
                         {...formItemLayout}
                         label="每日学习量： "
                         help ="每天学习的单词数"
                     >
-                        {getFieldDecorator('dailyNum', {initialValue: '50'})(
-                            <Select  style={{width: 200}} >
+                        {getFieldDecorator('dailyNum', {initialValue: this.props.dailyNum})(
+                            <Select  style={{width: 200}} onChange={this.handleChange}>
                                 <Option value= {20}>20</Option>
                                 <Option value= {50}>50</Option>
                                 <Option value= {60}>60</Option>
@@ -58,9 +64,6 @@ export  class VocabSettingForm extends Component<SettingFormProps> {
                                 <Option value= {200}>200</Option>
                             </Select>
                         )}
-                    </FormItem>
-                    <FormItem wrapperCol={{ span: 16, offset: 6 }} style={{ marginTop: 24 }}>
-                        <Button type="primary" htmlType="submit">确定</Button>
                     </FormItem>
                 </Form>
             </div>
@@ -80,7 +83,8 @@ export  class UserSettingForm extends Component<SettingFormProps> {
 
     handleSubmit(e) {
         e.preventDefault();
-        console.log('收到表单值：', this.props.form.getFieldsValue());
+        //console.log('收到表单值：', this.props.form.getFieldsValue());
+        this.props.dispatch({type: 'mysetting/modifyUserInfo', payload: this.props.form.getFieldsValue()});
     };
 
     render() {
@@ -95,19 +99,19 @@ export  class UserSettingForm extends Component<SettingFormProps> {
                     <FormItem
                         {...formItemLayout}
                         style={{marginTop:'30px'}}
-                        label="用户名">3111111@123.com
+                        label="用户名">{this.props.userInfo.id}
                     </FormItem>
                     <FormItem
                         {...formItemLayout}
                         label="昵称">
                         <Input
-                            {...getFieldProps('name', { initialValue: '小黄人' })}
+                            {...getFieldProps('name', { initialValue: this.props.userInfo.name })}
                             placeholder="请输入昵称" />
                     </FormItem>
                     <FormItem
                         {...formItemLayout}
                         label="性别">
-                        <RadioGroup {...getFieldProps('gender', { initialValue: 'female' })}>
+                        <RadioGroup {...getFieldProps('gender', { initialValue: this.props.userInfo.gender })}>
                             <Radio value="male">男</Radio>
                             <Radio value="female">女</Radio>
                         </RadioGroup>
@@ -117,7 +121,7 @@ export  class UserSettingForm extends Component<SettingFormProps> {
                         label="个人简介"
                         help="介绍一下你自己"
                     >
-                        <Input type="textarea" placeholder="我爱背单词..." {...getFieldProps('introduce', { initialValue: '' })} />
+                        <Input type="textarea" placeholder="我爱背单词..." {...getFieldProps('introduce', { initialValue: this.props.userInfo.introduce })} />
                     </FormItem>
                     <FormItem wrapperCol={{ span: 16, offset: 6 }} style={{ marginTop: 24 }}>
                         <Button type="primary" htmlType="submit">确定</Button>
