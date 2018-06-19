@@ -4,7 +4,7 @@ const MyVocabModel = {
     namespace: 'study',
     state: {
         vocabDetail:{id: '', word: 'acti',interpretation: 'afa', exampleSen:'vvfs'},
-        studyVocabNum: 60,
+        studyVocabNum: '',
     },
     reducers: {
         updateStudyVocabNum(st, payload) {
@@ -19,6 +19,9 @@ const MyVocabModel = {
             return history.listen(({pathname}) => {
                 if (pathname === '/study') {
                     dispatch({ type: 'getVocabDetail', payload: '' });
+                    dispatch({ type: 'getStudyVocabNum', payload: false});
+                }
+                if (pathname === '/dashboard') {
                     dispatch({ type: 'getStudyVocabNum', payload: false});
                 }
             });

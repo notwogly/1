@@ -39,7 +39,7 @@ export class NavigationBar extends Component<BarProps> {
     componentDidMount() {
     };
     handleClick(e) {
-        if(e.key !== this.props.current)this.props.dispatch({type:'dashboard/jump', payload: {direction: e.key}});
+        if(e.key !== this.props.current)this.props.dispatch({type:'vocablearninginfo/jump', payload: {direction: e.key}});
     };
 
     render() {
@@ -47,12 +47,6 @@ export class NavigationBar extends Component<BarProps> {
             <Menu onClick={this.handleClick}
                   selectedKeys={[this.props.current]}
                   mode="horizontal">
-                {/*<SubMenu title={<span><Icon type="VacbStudy" />单词学习</span>}>*/}
-                    {/*<MenuItemGroup title="单词学习">*/}
-                        {/*<Menu.Item key="user">个人信息查询</Menu.Item>*/}
-                        {/*<Menu.Item key="userManage">管理用户信息</Menu.Item>*/}
-                    {/*</MenuItemGroup>*/}
-                {/*</SubMenu>*/}
                 <Menu.Item key="study">
                     <Icon type="eye-o" />单词学习
                 </Menu.Item>

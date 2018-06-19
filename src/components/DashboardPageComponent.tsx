@@ -6,12 +6,15 @@ import {NavigationBar} from "./PublicComponents";
 import DvaProps from "../types/DvaProps";
 
 export interface DashBoardProps extends DvaProps {
-    vocabNum: any;
-
+    todayVocabNum: any;
+    bookName: string;
+    studyVocabNum: number;
 }
+var percent;
 
-export default class DashboardPageComponent extends Component<any> {
+export default class DashboardPageComponent extends Component<DashBoardProps> {
     render() {
+        percent = this.props.studyVocabNum*100/this.props.todayVocabNum.DailyNum;
         return (
             <div >
                 <NavigationBar current={"Dashboard"} dispatch={this.props.dispatch}/>
@@ -21,16 +24,16 @@ export default class DashboardPageComponent extends Component<any> {
                         <Row type="flex" justify="center" style={{ margin: '12px' }}>
                             <Col style={{ marginTop: '30px' }}>
                                 <div style={{ textAlign: 'center' }}>今日单词</div>
-                                <div><span style={{ fontSize: '100px', color: 'Navy' }}>89</span>个</div>
+                                <div><span style={{ fontSize: '100px', color: 'Navy' }}>{this.props.todayVocabNum.DailyNum}</span>个</div>
                             </Col>
                             <Col style={{ marginTop: '30px', marginLeft: '50px'}}>
                                 <div style={{ textAlign: 'center' }}>新词</div>
-                                <div><span style={{ fontSize: '100px', color: 'Navy' }}>79</span>个</div>
+                                <div><span style={{ fontSize: '100px', color: 'Navy' }}>{this.props.todayVocabNum.newVocab}</span>个</div>
                             </Col>
                         </Row>
                         <Row type="flex" justify="center" style={{ margin: '12px' }}>
                             <Col style={{marginBottom: '10px'}}>
-                                <div><span >当前词汇书 ：</span>六级词汇</div>
+                                <div><span >当前词汇书 ：</span>{this.props.bookName}</div>
                             </Col>
                         </Row>
                         <Row type="flex" justify="center" style={{ margin: '12px'}}>
@@ -38,7 +41,7 @@ export default class DashboardPageComponent extends Component<any> {
                                 <div style={{ textAlign: 'center' }}>学习进度: </div>
                             </Col>
                             <Col style={{marginBottom: '30px'}}>
-                                <div><Progress percent={70} style={{width: '200px'}}/></div>
+                                <div><Progress percent={parseInt(percent)} style={{width: '200px'}}/></div>
                             </Col>
                         </Row>
                         <br/>
@@ -53,12 +56,12 @@ export default class DashboardPageComponent extends Component<any> {
                         </Row>
                         <Row type="flex" justify="center" style={{ margin: '12px' }}>
                             <Col style={{ marginBottom: '30px' }}>
-                                <div><span style={{ fontSize: '100px', color: 'Navy' }}>44</span>天</div>
+                                <div><span style={{ fontSize: '100px', color: 'Navy' }}>{this.props.todayVocabNum.recordDay}</span>天</div>
                             </Col>
                         </Row>
                         <Row type="flex" justify="center" style={{ margin: '12px' }}>
                             <Col style={{marginBottom: '10px'}}>
-                                <div><span >当前词汇书 ：</span>六级词汇</div>
+                                <div><span >当前词汇书 ：</span>{this.props.bookName}</div>
                             </Col>
                         </Row>
                         <br/>

@@ -1,12 +1,13 @@
 import {routerRedux} from 'dva/router';
 
 const MyVocabModel = {
-    namespace: 'vocabsetting',
+    namespace: 'vocablearninginfo',
     state: {
         vocabBook: [{id: '', bookName: '',vocabNumber: ''},],
         bookName: '',
         bookIntro: '',
-        vocabNum: {totalNum: 100, mastered: 0, learning: 79, newVocab: 10},
+        vocabNum: {totalNum: '', mastered: '', learning: '', newVocab: ''},
+        todayVocabNum: {DailyNum: '', newVocab: '', recordDay: ''},
     },
     reducers: {
         updateVocabNumInfo(st, payload) {
@@ -17,6 +18,9 @@ const MyVocabModel = {
         },
         updateVocabInfo(st, payload) {
             return {...st, ...payload.payload};
+        },
+        updateTodayVocabNumInfo(st, payload) {
+            return {...st, ...payload.payload};
         }
     },
     subscriptions: {
@@ -24,6 +28,10 @@ const MyVocabModel = {
             return history.listen(({pathname}) => {
                 if (pathname === '/vocabProgress') {
                     dispatch({ type: 'getVocabNum', payload: true});
+                    dispatch({ type: 'vocabBook', payload: true});
+                };
+                if (pathname === '/dashboard') {
+                    dispatch({ type: 'getTodayVocabNum', payload: true});
                     dispatch({ type: 'vocabBook', payload: true});
                 };
                 if (pathname === '/vocabBook') {
@@ -40,11 +48,18 @@ const MyVocabModel = {
             });
             return;
         },
+        * getTodayVocabNum(payload: {payload: boolean}, {call, put}) {
+            yield put({
+                type: 'updateTodayVocabNumInfo',
+                payload: {todayVocabNum: {DailyNum: 101, newVocab: 11, recordDay: 45},}
+            });
+            return;
+        },
         * vocabBook(payload: {payload: boolean}, {call, put}) {
             //console.log('this is the vocabBook');
             yield put({
                 type: 'updateVocabBookInfo',
-                payload: {bookName: '六级词汇', bookIntro:'关于六级的词汇书'}
+                payload: {bookName: '六级词汇new', bookIntro:'关于六级的词汇书'}
             });
             return;
         },
@@ -64,6 +79,11 @@ const MyVocabModel = {
             // });
             return;
         },
+        *jump(payload: {payload:{direction: string}},{call,put}){
+            const direction = payload.payload.direction;
+            yield put(routerRedux.push("/"+direction));
+            return;
+        }
     }
 };
 

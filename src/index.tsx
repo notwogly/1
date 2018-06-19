@@ -6,10 +6,9 @@ import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import LoginModel from './models/LoginModel';
 import RegisterModel from './models/RegisterModel';
-import DashboardModel from './models/DashboardModel';
 import MyVocabModel from './models/MyVocabModel';
 import StudyModel from './models/StudyModel';
-import VocabSetting from './models/VocabSettingModel';
+import VocabLearningInfo from './models/VocabLearingInfoModel';
 import MySetting from './models/MySettingModel';
 
 import AuthRoute from './components/AuthRoute';
@@ -32,17 +31,16 @@ const app = dva({
 
 app.model(LoginModel);
 app.model(RegisterModel);
-app.model(DashboardModel);
 app.model(MyVocabModel);
 app.model(StudyModel);
-app.model(VocabSetting);
+app.model(VocabLearningInfo);
 app.model(MySetting);
 
 const LoginPage = connect(state => { return {}; })(LoginPageComponent);
 const RegisterPage = connect(state => { return {}; })(RegisterPageComponent);
-const DashboardPage = connect(state => { return {
-    ...state.dashboard
-}; })(DashboardPageComponent);
+const DashboardPage = connect(state => {
+    return {todayVocabNum: state.vocablearninginfo.todayVocabNum, bookName: state.vocablearninginfo.bookName, studyVocabNum: state.study.studyVocabNum};
+})(DashboardPageComponent);
 const StudyPage = connect(state => {
     return {dataSource:state.study.vocabDetail, studyVocabNum: state.study.studyVocabNum, dailyNum: state.mysetting.dailyNum};
 })(StudyPageComponent);
@@ -50,13 +48,13 @@ const VocabDetail = connect(state => {
     return {vocabDetail: state.study.vocabDetail};
 })(VocabDetailComponent);
 const VocabProgressPage = connect(state => {
-    return {dataSource: state.vocabsetting.vocabNum, bookName: state.vocabsetting.bookName};
+    return {dataSource: state.vocablearninginfo.vocabNum, bookName: state.vocablearninginfo.bookName};
 })(VocabProgressPageCompoent);
 const Setting = connect(state => {
-    return {userInfo: state.mysetting.userInfo, bookName: state.vocabsetting.bookName, dailyNum: state.mysetting.dailyNum};
+    return {userInfo: state.mysetting.userInfo, bookName: state.vocablearninginfo.bookName, dailyNum: state.mysetting.dailyNum};
 })(SettingPageComponent);
 const VocabBook = connect(state => {
-    return {bookName: state.vocabsetting.bookName, bookIntro: state.vocabsetting.bookIntro, dataSource: state.vocabsetting.vocabBook};
+    return {bookName: state.vocablearninginfo.bookName, bookIntro: state.vocablearninginfo.bookIntro, dataSource: state.vocablearninginfo.vocabBook};
 })(VocabBookComponent);
 const MyVocab = connect(state => {
     return {dataSource: state.myvocab.dataSource};
