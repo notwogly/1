@@ -28,7 +28,7 @@ const columns = [
     {title: '释义', dataIndex: 'interpretation', key: 'interpretation'},
 ];
 var nowKey = 1;
-var selectedVocab = {};
+var selectedVocab = new vocabData();
 
 export  default class MyVocabComponent extends Component<MyVocabProps, viewState> {
     constructor(props) {
@@ -73,6 +73,7 @@ export  default class MyVocabComponent extends Component<MyVocabProps, viewState
             onChange: this.onSelectChange,
             onSelect(record, selected, selectedRows) {
                 selectedVocab = record;
+                //console.log(selectedVocab);
             },
         };
         return (

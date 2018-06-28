@@ -5,9 +5,8 @@ import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 
 export interface LoginState {
-    token: string;
     email: string;
-    username: string;
+    id: string;
 };
 
 export interface ILoginModel {
@@ -17,22 +16,24 @@ export interface ILoginModel {
 const LoginModel = {
     namespace: 'login',
     state: {
-        token: '',
         email: '',
-        username: 'Guest'
+        id: -1
     },
     effects: {
         * login(payload: { payload: LoginFormData }, { call, put }) {
             const msg = payload.payload;
-            const response = yield call(authFetch, '/session/login', 'POST', msg);
-            console.log(response);
+            const response = yield call(authFetch, '/user/login', 'POST', msg);
             if (response.status === 400) {
                 message.error('用户名或密码错误');
                 return;
             }
             const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0){
+                message.error('用户名或密码错误');
+                return;
+            }
             const body = JSON.parse(jsonBody);
-            yield put({ type: 'updateSession', payload: { email: body.email, username: body.username, token: body.token } });
+            yield put({ type: 'updateSession', payload: { email: body.email, id: body.id} });
             message.success('登录成功');
             yield put({ type: 'saveSession' });
             yield put(routerRedux.push('/dashboard'));
@@ -42,8 +43,8 @@ const LoginModel = {
     },
     reducers: {
         saveSession(state: LoginState): null {
-            const { email, token, username } = state;
-            const values = JSON.stringify({ email, token, username });
+            const { email, id } = state;
+            const values = JSON.stringify({ email, id });
             localStorage.setItem(sessionStorageKey, values);
             return null;
         },

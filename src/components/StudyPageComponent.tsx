@@ -7,8 +7,7 @@ import {NavigationBar} from './PublicComponents';
 
 interface StudyProps extends DvaProps {
     dataSource: any;
-    studyVocabNum: number;
-    dailyNum: number;
+    todayVocabNum: any;
 }
 
 interface ViewState {
@@ -16,7 +15,8 @@ interface ViewState {
     refresh: boolean;
 }
 
-var studyNum = -1;
+var learningNum = -1;
+var percent = 0;
 export  default class StudyComponent extends Component<StudyProps, ViewState> {
     constructor(props) {
         super(props);
@@ -24,7 +24,6 @@ export  default class StudyComponent extends Component<StudyProps, ViewState> {
             modalState: false,
             refresh : false,
         }
-        this.props.dispatch({type:'mysetting/getVocabSetting',payload:''});
         this.handleSubmit1 = this.handleSubmit1.bind(this);
         this.handleSubmit2 = this.handleSubmit2.bind(this);
         this.handleOk = this.handleOk.bind(this);
@@ -33,8 +32,9 @@ export  default class StudyComponent extends Component<StudyProps, ViewState> {
 
     handleSubmit1 = (e) => {
         e.preventDefault();
-        this.props.dispatch({type:'study/addStudyVocabNum',payload: (studyNum+1)});
-        this.props.dispatch({type:'study/jumpDetail',payload: {word:this.props.dataSource.word, vocabState: true}});
+        this.props.dispatch({type:'study/changeVocabFromNewVocabToMastered',payload: (this.props.dataSource.id)});
+        this.props.dispatch({type:'vocablearninginfo/getTodayVocabNum',payload: true});
+        this.props.dispatch({type:'study/jumpDetail',payload: {vocabId:this.props.dataSource.id, vocabState: true}});
     }
 
     handleSubmit2 = (e) => {
@@ -44,16 +44,19 @@ export  default class StudyComponent extends Component<StudyProps, ViewState> {
 
     handleOk() {
         this.setState({modalState: false,});
-        this.props.dispatch({type:'study/jumpDetail',payload:{word:this.props.dataSource.word, vocabState: true}});
+        this.props.dispatch({type:'study/changeVocabFromNewVocabToMastered',payload: (this.props.dataSource.id)});
+        this.props.dispatch({type:'study/jumpDetail',payload:{vocabId:this.props.dataSource.id, vocabState: true}});
     };
 
     handleCancel(e) {
         this.setState({modalState: false,});
-        this.props.dispatch({type:'study/jumpDetail',payload: {word:this.props.dataSource.word, vocabState: false}});
+        this.props.dispatch({type:'study/changeVocabFromNewVocabToLearning',payload: (this.props.dataSource.id)});
+        this.props.dispatch({type:'study/jumpDetail',payload:{vocabId:this.props.dataSource.id, vocabState: false}});
     };
 
     render() {
-        studyNum = this.props.studyVocabNum;
+        learningNum = this.props.todayVocabNum.learning;
+        percent = (this.props.todayVocabNum.learning+this.props.todayVocabNum.mastered)*100/this.props.todayVocabNum.dailyNum;
         return (
             <div>
                 <NavigationBar current={"study"} dispatch={this.props.dispatch}/>
@@ -95,7 +98,7 @@ export  default class StudyComponent extends Component<StudyProps, ViewState> {
                     <Row type="flex" justify="center" style={{ margin: '12px' }}>
                         <Col style={{marginBottom: '30px', marginTop: '30px'}}>
                             <div style={{ textAlign: 'center'}}>学习进度: </div>
-                            <div><Progress percent={studyNum*100/this.props.dailyNum} style={{width: '300px'}}/></div>
+                            <div><Progress percent={ parseInt(percent.toString())} style={{width: '300px'}}/></div>
                         </Col>
                     </Row>
                     <br/>

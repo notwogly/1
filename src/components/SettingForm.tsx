@@ -22,11 +22,10 @@ export  class VocabSettingForm extends Component<SettingFormProps> {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
-        this.props.dispatch({type: 'vocabsetting/vocabBook', payload: true});
     }
 
     handleChange(value) {
-        console.log(value);
+        //console.log(value);
         this.props.dispatch({type: 'mysetting/modifyDailyNum', payload: value});
         success();
     };
@@ -99,13 +98,13 @@ export  class UserSettingForm extends Component<SettingFormProps> {
                     <FormItem
                         {...formItemLayout}
                         style={{marginTop:'30px'}}
-                        label="用户名">{this.props.userInfo.id}
+                        label="邮箱">{this.props.userInfo.email}
                     </FormItem>
                     <FormItem
                         {...formItemLayout}
                         label="昵称">
                         <Input
-                            {...getFieldProps('name', { initialValue: this.props.userInfo.name })}
+                            {...getFieldProps('username', { initialValue: this.props.userInfo.username})}
                             placeholder="请输入昵称" />
                     </FormItem>
                     <FormItem
@@ -121,7 +120,7 @@ export  class UserSettingForm extends Component<SettingFormProps> {
                         label="个人简介"
                         help="介绍一下你自己"
                     >
-                        <Input type="textarea" placeholder="我爱背单词..." {...getFieldProps('introduce', { initialValue: this.props.userInfo.introduce })} />
+                        <Input type="textarea" placeholder="我爱背单词..." {...getFieldProps('intro', { initialValue: this.props.userInfo.intro })} />
                     </FormItem>
                     <FormItem wrapperCol={{ span: 16, offset: 6 }} style={{ marginTop: 24 }}>
                         <Button type="primary" htmlType="submit">确定</Button>

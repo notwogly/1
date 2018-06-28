@@ -39,22 +39,22 @@ app.model(MySetting);
 const LoginPage = connect(state => { return {}; })(LoginPageComponent);
 const RegisterPage = connect(state => { return {}; })(RegisterPageComponent);
 const DashboardPage = connect(state => {
-    return {todayVocabNum: state.vocablearninginfo.todayVocabNum, bookName: state.vocablearninginfo.bookName, studyVocabNum: state.study.studyVocabNum};
+    return {todayVocabNum: state.vocablearninginfo.todayVocabNum, bookName: state.vocablearninginfo.learningBook.bookName, recordDay: state.mysetting.userInfo.recordDay};
 })(DashboardPageComponent);
 const StudyPage = connect(state => {
-    return {dataSource:state.study.vocabDetail, studyVocabNum: state.study.studyVocabNum, dailyNum: state.mysetting.dailyNum};
+    return {dataSource:state.study.vocabDetail, todayVocabNum: state.vocablearninginfo.todayVocabNum};
 })(StudyPageComponent);
 const VocabDetail = connect(state => {
     return {vocabDetail: state.study.vocabDetail};
 })(VocabDetailComponent);
 const VocabProgressPage = connect(state => {
-    return {dataSource: state.vocablearninginfo.vocabNum, bookName: state.vocablearninginfo.bookName};
+    return {dataSource: state.vocablearninginfo.UserVocabNum, bookName: state.vocablearninginfo.learningBook.bookName};
 })(VocabProgressPageCompoent);
 const Setting = connect(state => {
-    return {userInfo: state.mysetting.userInfo, bookName: state.vocablearninginfo.bookName, dailyNum: state.mysetting.dailyNum};
+    return {userInfo: state.mysetting.userInfo, bookName: state.vocablearninginfo.learningBook.bookName, dailyNum: state.mysetting.dailyNum};
 })(SettingPageComponent);
 const VocabBook = connect(state => {
-    return {bookName: state.vocablearninginfo.bookName, bookIntro: state.vocablearninginfo.bookIntro, dataSource: state.vocablearninginfo.vocabBook};
+    return {learningBook: state.vocablearninginfo.learningBook, dataSource: state.vocablearninginfo.vocabBooks};
 })(VocabBookComponent);
 const MyVocab = connect(state => {
     return {dataSource: state.myvocab.dataSource};

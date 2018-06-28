@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { Route, Redirect } from 'dva/router';
-import { isAuthed } from '../utils/auth';
 
 interface AuthRouteProps {
     component: any,

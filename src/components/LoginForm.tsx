@@ -12,7 +12,7 @@ interface FormProps extends DvaProps {
 
 export class LoginFormData {
     email: string;
-    password: string;
+    pwd: string;
 }
 
 export class LoginForm extends Component<FormProps, LoginFormData> {
@@ -58,7 +58,7 @@ export class LoginForm extends Component<FormProps, LoginFormData> {
                 </FormItem>
                 <FormItem label="密码" {...formItemLayout} hasFeedback>
                     {
-                        getFieldDecorator('password', {
+                        getFieldDecorator('pwd', {
                             rules: [
                                 {required: true, message: '请输入密码'}
                             ]

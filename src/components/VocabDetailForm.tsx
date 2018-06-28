@@ -17,7 +17,7 @@ export  class SettingForm extends Component<VocabDetailFormProps> {
     constructor(props) {
         super(props);
         //console.log(this.props.location.query);
-        this.props.dispatch({type: "study/getVocabDetail", payload: this.props.location.query})
+    this.props.dispatch({type: "study/getVocabDetail", payload: this.props.location.query})
     }
 
     render() {

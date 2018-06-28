@@ -1,5 +1,8 @@
 import {routerRedux} from 'dva/router';
-import vocabData from '../components/MyVocabPageComponent';
+import {authFetch} from "../utils/auth";
+import {message} from "antd";
+import {vocabData} from "../components/MyVocabPageComponent";
+import {loadSession} from "../utils/localStorage";
 
 const MyVocabModel = {
     namespace: 'myvocab',
@@ -21,61 +24,90 @@ const MyVocabModel = {
         }
     },
     effects: {
-        * getMyVocab(payload: {payload: number}, {call, put}) {
-            if( payload.payload == 1)
-            {
-                yield put({
-                    type: 'updateVocabInfo',
-                    payload: {dataSource: [{id: 1, word: 'my1',interpretation: '我的'},
-                            {id: 2, word: 'your1',interpretation: '你的'},],}
-                });
+        *  getMyVocab(payload: {payload: number}, {call, put}) {
+            var userId = (yield  call(loadSession)).id;
+            const response = yield call(authFetch, '/user/getVocab/'+userId+'/'+payload.payload, 'GET');
+            if(response.status === 400){
+                message.error('获取词库失败');
+                return;
             }
-            else if( payload.payload == 2)
+            const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0)
             {
-                yield put({
-                    type: 'updateVocabInfo',
-                    payload: {dataSource: [{id: 1, word: 'my2',interpretation: '我的2'},
-                            {id: 2, word: 'your2',interpretation: '你的2'},],}
-                });
+                message.error('获取词库失败');
+                return;
             }
-            else if( payload.payload == 3)
-            {
-                yield put({
-                    type: 'updateVocabInfo',
-                    payload: {dataSource: [{id: 1, word: 'my3',interpretation: '我的3'},
-                            {id: 2, word: 'your3',interpretation: '你的3'},],}
-                });
-            }
-            else if( payload.payload == 4)
-            {
-                yield put({
-                    type: 'updateVocabInfo',
-                    payload: {dataSource: [{id: 1, word: 'my4',interpretation: '我的4'},
-                            {id: 2, word: 'your4',interpretation: '你的4'},],}
-                });
-            }
-            else
-            {
-                yield put({
-                    type: 'updateVocabInfo',
-                    payload: {dataSource: [{id: 1, word: '',interpretation: ''},],}
-                });
-            }
+            //将字符串转换为json对象
+            const body = JSON.parse(jsonBody);
+            //console.log(body);
+            yield put({
+                type: 'updateVocabInfo',
+                payload: {dataSource: body,}
+            });
             return;
         },
         *  clearMyVocab(payload: {payload: boolean}, {call, put}) {
-            yield put({
-                type: 'updateVocabInfo',
-                payload: {dataSource: [{id: 1, word: '空',interpretation: '空'},],}
-            });
+            var userId = (yield  call(loadSession)).id;
+            const response = yield call(authFetch, '/user/clearVocabs/'+userId, 'DELETE');
+            if(response.status === 400){
+                message.error('清空词库失败');
+                return;
+            }
+            message.success('清空成功');
+
             return;
         },
-        *  deleteVocab(payload: {payload: {key:number, selectedVocab:vocabData}}, {call, put}) {
-            console.log(payload.payload);
+        *  deleteVocab(payload: {payload: {key:number, value: vocabData}}, {call, put}) {
+            //console.log(payload.payload);
+            var userId = (yield  call(loadSession)).id;
+            var  vocabId = payload.payload.value.id;
+            var  type = payload.payload.key;
+            if(type == 2)
+            {
+                const response = yield call(authFetch, '/user/deleteVocab/'+userId, 'DELETE',{ vocabId: vocabId, type: parseInt(type.toString())} );
+                if(response.status === 400){
+                    message.error('获取词库失败');
+                    return;
+                }
+                const jsonBody = yield call(response.text.bind(response));
+                if(jsonBody.length === 0)
+                {
+                    message.error('删除失败');
+                    return;
+                }
+                //将字符串转换为json对象
+                const body = JSON.parse(jsonBody);
+                if(body === false) {
+                    message.error('修改词库失败');
+                    return;
+                }
+            }else
+            {
+                var msg = { vocabId: vocabId, type: 2, oldType: parseInt(type.toString())};
+                const response = yield call(authFetch, '/user/changeVocabs/'+userId, 'POST',msg);
+                if(response.status === 400){
+                    message.error('获取词库失败');
+                    return;
+                }
+                const jsonBody = yield call(response.text.bind(response));
+                if(jsonBody.length === 0)
+                {
+                    message.error('删除失败');
+                    return;
+                }
+                //将字符串转换为json对象
+                const body = JSON.parse(jsonBody);
+                if(body === false)
+                {
+                    message.error('修改失败');
+                    return;
+                }
+            }
             yield put({
-                type: 'updateVocabInfo',
-                payload: {dataSource: [{id: 1, word: '空',interpretation: '空'},],}
+                type: 'getMyVocab',
+                payload: type
             });
+
             return;
         }
     }

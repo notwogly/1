@@ -1,16 +1,19 @@
 import {routerRedux} from 'dva/router';
+import {authFetch} from "../utils/auth";
+import {message} from "antd";
+import {loadSession} from "../utils/localStorage";
 
-const MyVocabModel = {
+const MySettingModel = {
     namespace: 'mysetting',
     state: {
-        userInfo:{id: '', name: '',gender: '', introduce: ''},
+        userInfo:{id: '', email:'', username: '',gender: '', intro: '', recordDay: ''},
         dailyNum: '',
     },
     reducers: {
         updateUserInfo(st, payload) {
             return {...st, ...payload.payload};
         },
-        updateVocabInfo(st, payload) {
+        updateDailyNum(st, payload) {
             return {...st, ...payload.payload};
         }
     },
@@ -18,43 +21,96 @@ const MyVocabModel = {
         setup({dispatch, history}) {
             return history.listen(({pathname}) => {
                 if (pathname === '/setting') {
-                    dispatch({ type: 'getUserSetting', payload: '' });
-                    dispatch({ type: 'getVocabSetting', payload: '' });
+                    dispatch({ type: 'getUserInfo', payload: '' });
+                    dispatch({ type: 'getDailyNum', payload: true });
+                };
+                if (pathname === '/dashboard') {
+                    dispatch({ type: 'getUserInfo', payload: '' });
                 }
             });
         }
     },
     effects: {
-        * getUserSetting(payload: {payload: string}, {call, put}) {
+        * getUserInfo(payload: {payload: string}, {call, put}) {
+            var email = (yield  call(loadSession)).email;
+            const response = yield call(authFetch, '/user/email/'+email, 'GET');
+            if(response.status === 400){
+                message.error('查询用户信息失败');
+                return;
+            }
+            const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0)
+            {
+                message.error('查询用户信息失败');
+                return;
+            }
+            //将字符串转换为json对象
+            const body = JSON.parse(jsonBody);
+            //console.log(body);
             yield put({
                 type: 'updateUserInfo',
-                payload: {userInfo: {id: '3111@123.com', name: '小黄人',gender: 'female', introduce:'我爱背单词...'},}
+                payload: {userInfo: body,}
             });
             return;
         },
-        * getVocabSetting(payload: {payload: string}, {call, put}) {
+        * getDailyNum(payload: {payload: boolean}, {call, put}) {
+            var userId = (yield  call(loadSession)).id;
+            const response = yield call(authFetch, '/user/getBook/'+userId, 'GET');
+            if(response.status === 400){
+                message.error('查询用户信息失败');
+                return;
+            }
+            const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0)
+            {
+                message.error('查询用户信息失败');
+                return;
+            }
+            //将字符串转换为json对象
+            const body = JSON.parse(jsonBody);
+            var dailyNum = body.dailyNum;
+            //console.log(dailyNum);
             yield put({
-                type: 'updateVocabInfo',
-                payload: {dailyNum:'50',}
+                type: 'updateDailyNum',
+                payload: {dailyNum: dailyNum}
             });
             return;
         },
         * modifyDailyNum(payload: {payload: number}, {call, put}) {
+            var userId = (yield  call(loadSession)).id;
+            const response = yield call(authFetch, '/dailyLearning/setDailyNum/'+userId, 'POST', payload.payload);
+            if(response.status === 400){
+                message.error('修改用户信息失败');
+                return;
+            }
             yield put({
-                type: 'updateVocabInfo',
+                type: 'updateDailyNum',
                 payload: {dailyNum: payload.payload,}
             });
             return;
         },
-        * modifyUserInfo(payload: {payload:{name: string, gender: string, introduce: string}}, {call, put}) {
-            //console.log(payload.payload);
+        * modifyUserInfo(payload: {payload:{username: string, gender: string, intro: string}}, {call, put}) {
+            var userId = (yield  call(loadSession)).id;
+            const response = yield call(authFetch, '/user/'+userId+'/userInfo', 'POST', payload.payload);
+            if(response.status === 400){
+                message.error('修改用户信息失败');
+                return;
+            }
+            const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0)
+            {
+                message.error('用户名被占用');
+                return;
+            }
+            //将字符串转换为json对象
+            const body = JSON.parse(jsonBody);
             yield put({
                 type: 'updateUserInfo',
-                payload: {userInfo: {id: '3111@123.com', name: payload.payload.name,gender: payload.payload.gender, introduce: payload.payload.introduce},}
+                payload: {userInfo: body}
             });
             return;
         },
     }
 };
 
-export default MyVocabModel;
+export default MySettingModel;

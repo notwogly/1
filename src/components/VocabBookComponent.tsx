@@ -10,18 +10,17 @@ const FormItem = Form.Item;
 const columns = [
     {title: '书号', dataIndex: 'id', key: 'id'},
     {title: '书名', dataIndex: 'bookName', key: 'bookName'},
-    {title: '单词数', dataIndex: 'vocabNumber', key: 'vocabNumber'},
+    {title: '单词数', dataIndex: 'totalVocabNumber', key: 'totalVocabNumber'},
 ];
 
-var initData = [{id: '', bookName: '',vocabNumber: ''},];
+var initData = [{id: '', bookName: '',totalVocabNumber: ''},];
 var initBookName = '';
 var initBookIntro = '';
-var confirmData = {id: '', bookName: '',vocabNumber: ''};
+var confirmData = {id: '', bookName: '',totalVocabNumber: ''};
 
 interface VocabBookProps extends DvaProps {
     form: any;
-    bookName: any;
-    bookIntro: any;
+    learningBook: any;
     dataSource: any;
 }
 
@@ -50,7 +49,7 @@ class SearchForm extends Component<VocabBookProps,ViewState> {
             if (err) {
                 return;
             }
-            this.props.dispatch({type: 'vocabsetting/getVocabBook', payload: values});
+            this.props.dispatch({type: 'vocablearninginfo/getVocabBooks', payload: values});
             this.setState({refresh:true});
         });
     }
@@ -58,8 +57,8 @@ class SearchForm extends Component<VocabBookProps,ViewState> {
     handleSubmit2 = (e) => {
         e.preventDefault();
         this.setState({modalState: true,});
-        this.props.dispatch({type:'vocabsetting/modifyVocabBook',payload:confirmData});
-        this.props.dispatch({type: 'vocabsetting/vocabBook', payload: true});
+        this.props.dispatch({type: 'vocablearninginfo/modifyLearningBook',payload:confirmData});
+        this.props.dispatch({type: 'vocablearninginfo/getLearningBook', payload: true});
     }
 
     handleOk() {
@@ -72,8 +71,8 @@ class SearchForm extends Component<VocabBookProps,ViewState> {
 
     render() {
         const {getFieldDecorator} = this.props.form;
-        initBookIntro = this.props.bookIntro;
-        initBookName = this.props.bookName;
+        initBookIntro = this.props.learningBook.bookIntro;
+        initBookName = this.props.learningBook.bookName;
         initData = this.props.dataSource;
         return (
             <div>
@@ -113,7 +112,7 @@ class SearchForm extends Component<VocabBookProps,ViewState> {
                         <br/>
                         <p> 书名: {confirmData.bookName}</p>
                         <br/>
-                        <p> 单词数: {confirmData.vocabNumber}</p>
+                        <p> 单词数: {confirmData.totalVocabNumber}</p>
                         <br/>
                     </Modal>
                 </Form>
@@ -148,7 +147,7 @@ export default class VocabBookComponent extends Component<VocabBookProps> {
                 <NavigationBar current={"vocabBook"} dispatch={this.props.dispatch}/>
                 <br/>
                 <div>
-                    <WrappedSearchForm dispatch={this.props.dispatch} dataSource={this.props.dataSource} bookName = {this.props.bookName} bookIntro = {this.props.bookIntro}/>
+                    <WrappedSearchForm dispatch={this.props.dispatch} dataSource={this.props.dataSource} learningBook = {this.props.learningBook}/>
                 </div>
             </div>
         );

@@ -1,22 +1,25 @@
 import {routerRedux} from 'dva/router';
+import {authFetch} from "../utils/auth";
+import {message} from "antd";
+import {ILoginModel} from "./LoginModel";
+import {loadSession} from "../utils/localStorage";
 
-const MyVocabModel = {
+const VocabLearningInfoModel = {
     namespace: 'vocablearninginfo',
     state: {
-        vocabBook: [{id: '', bookName: '',vocabNumber: ''},],
-        bookName: '',
-        bookIntro: '',
-        vocabNum: {totalNum: '', mastered: '', learning: '', newVocab: ''},
-        todayVocabNum: {DailyNum: '', newVocab: '', recordDay: ''},
+        vocabBooks: [{id: '', bookName: '',totalVocabNumber: ''},],
+        learningBook: { id: '', bookName: '',  bookIntro: '',},
+        UserVocabNum: { totalNum: '', mastered: '', learning: '', newVocab: '', dailyNum: ''},
+        todayVocabNum: { dailyNum: '', newVocab: '', learning:'', mastered:'' },
     },
     reducers: {
-        updateVocabNumInfo(st, payload) {
+        updateLearningBookInfo(st, payload) {
             return {...st, ...payload.payload};
         },
-        updateVocabBookInfo(st, payload) {
+        updateVocabBooksInfo(st, payload) {
             return {...st, ...payload.payload};
         },
-        updateVocabInfo(st, payload) {
+        updateUserVocabNumInfo(st, payload) {
             return {...st, ...payload.payload};
         },
         updateTodayVocabNumInfo(st, payload) {
@@ -26,57 +29,137 @@ const MyVocabModel = {
     subscriptions: {
         setup({dispatch, history}) {
             return history.listen(({pathname}) => {
-                if (pathname === '/vocabProgress') {
-                    dispatch({ type: 'getVocabNum', payload: true});
-                    dispatch({ type: 'vocabBook', payload: true});
-                };
                 if (pathname === '/dashboard') {
                     dispatch({ type: 'getTodayVocabNum', payload: true});
-                    dispatch({ type: 'vocabBook', payload: true});
+                    dispatch({ type: 'getLearningBook', payload: true});
+                };
+                if (pathname === '/study') {
+                    dispatch({ type: 'getTodayVocabNum', payload: true});
+                };
+                if (pathname === '/vocabProgress') {
+                    dispatch({ type: 'getUserVocabNum', payload: true});
+                    dispatch({ type: 'getLearningBook', payload: true});
+                };
+                if (pathname === '/setting') {
+                    dispatch({ type: 'getLearningBook', payload: true});
                 };
                 if (pathname === '/vocabBook') {
-                    dispatch({ type: 'vocabBook', payload: true});
+                    dispatch({ type: 'getVocabBooks', payload: ''});
+                    dispatch({ type: 'getLearningBook', payload: true});
                 }
             });
         }
     },
     effects: {
-        * getVocabNum(payload: {payload: boolean}, {call, put}) {
+        * getVocabBooks(payload: {payload: string}, {call, put}) {
+            //console.log(payload.payload);
+            const response = yield call(authFetch, '/book', 'GET');
+            if(response.status === 400){
+                message.error('获取所有单词书失败');
+                return;
+            }
+            const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0)
+            {
+                message.error('获取所有单词书失败');
+                return;
+            }
+            //将字符串转换为json对象
+            const body = JSON.parse(jsonBody);
+            //console.log(body);
             yield put({
-                type: 'updateVocabNumInfo',
-                payload: {vocabNum: {totalNum: 101, mastered: 1, learning: 80, newVocab: 11},}
+                type: 'updateVocabBooksInfo',
+                payload: {vocabBooks: body,}
+            });
+            return;
+        },
+        * getLearningBook(payload: {payload: boolean}, {call, put}) {
+            var userId = (yield  call(loadSession)).id;
+            const response = yield call(authFetch, '/user/getBook/'+userId, 'GET');
+            if(response.status === 400){
+                message.error('获取正在学习的单词书失败');
+                return;
+            }
+            const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0)
+            {
+                message.error('获取正在学习的单词书失败');
+                return;
+            }
+            //将字符串转换为json对象
+            const body = JSON.parse(jsonBody);
+            yield put({
+                type: 'updateLearningBookInfo',
+                payload: {learningBook: body,}
+            });
+            return;
+        },
+        * getUserVocabNum(payload: {payload: boolean}, {call, put}) {
+            var userId = (yield  call(loadSession)).id;
+            const response = yield call(authFetch, '/user/getBook/'+userId, 'GET');
+            if(response.status === 400){
+                message.error('获取当前学习信息失败');
+                return;
+            }
+            const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0)
+            {
+                message.error('获取当前学习信息失败');
+                return;
+            }
+            //将字符串转换为json对象
+            const body = JSON.parse(jsonBody);
+            //console.log(body);
+            yield put({
+                type: 'updateUserVocabNumInfo',
+                payload: {UserVocabNum: body,}
             });
             return;
         },
         * getTodayVocabNum(payload: {payload: boolean}, {call, put}) {
+            var userId = (yield  call(loadSession)).id;
+            const response = yield call(authFetch, '/user/getDailyLearning/'+userId, 'GET');
+            if(response.status === 400){
+                message.error('获取本日学习信息失败');
+                return;
+            }
+            const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0)
+            {
+                message.info('无正在学习的书，请先设置');
+                return;
+            }
+            //将字符串转换为json对象
+            const body = JSON.parse(jsonBody);
+           // console.log(body);
             yield put({
                 type: 'updateTodayVocabNumInfo',
-                payload: {todayVocabNum: {DailyNum: 101, newVocab: 11, recordDay: 45},}
+                payload: {todayVocabNum: body,}
             });
             return;
         },
-        * vocabBook(payload: {payload: boolean}, {call, put}) {
-            //console.log('this is the vocabBook');
+        //修改正在学习的词汇书
+        * modifyLearningBook(payload: {payload: {id:number, bookName: string} }, {call, put}) {
+            //console.log(payload.payload);
+            var userId = (yield  call(loadSession)).id;
+            const response = yield call(authFetch, '/user/addBook/'+userId+'/'+payload.payload.id, 'POST');
+            if(response.status === 400){
+                message.error('增加书本学习信息失败');
+                return;
+            }
+            const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0)
+            {
+                message.error('增加书本学习信息失败');
+                return;
+            }
+            //将字符串转换为json对象
+            const body = JSON.parse(jsonBody);
+            //console.log(body);
             yield put({
-                type: 'updateVocabBookInfo',
-                payload: {bookName: '六级词汇new', bookIntro:'关于六级的词汇书'}
+                type: 'getLearningBook',
+                payload: true,
             });
-            return;
-        },
-        * getVocabBook(payload: {payload: string }, {call, put}) {
-            console.log(payload.payload);
-            yield put({
-                type: 'updateVocabInfo',
-                payload: {vocabBook: [{id: 10001, bookName: '六级词汇',vocabNumber: '1003'},],}
-            });
-            return;
-        },
-        * modifyVocabBook(payload: {payload: {id:number, bookName: string} }, {call, put}) {
-            console.log(payload.payload);
-            // yield put({
-            //     type: 'updateVocabInfo',
-            //     payload: {vocabBook: [{id: 10001, bookName: '六级词汇',vocabNumber: '1003'},],}
-            // });
             return;
         },
         *jump(payload: {payload:{direction: string}},{call,put}){
@@ -87,4 +170,4 @@ const MyVocabModel = {
     }
 };
 
-export default MyVocabModel;
+export default VocabLearningInfoModel;

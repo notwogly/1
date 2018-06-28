@@ -12,8 +12,7 @@ interface FormProps extends DvaProps {
 
 export class RegisterFormData {
     email: string;
-    username: string;
-    password: string;
+    pwd: string;
 }
 
 export default class RegisterForm extends Component<FormProps, RegisterFormData> {
@@ -55,20 +54,9 @@ export default class RegisterForm extends Component<FormProps, RegisterFormData>
                         )
                     }
                 </FormItem>
-                <FormItem label="用户名" {...formItemLayout} hasFeedback>
-                    {
-                        getFieldDecorator('username', {
-                            rules: [
-                                {required: true, message: '请输入用户名'}
-                            ]
-                        })(
-                            <Input prefix={<Icon type="user" style={{fontSize: 13}}/>}/>
-                        )
-                    }
-                </FormItem>
                 <FormItem label="密码" {...formItemLayout} hasFeedback>
                     {
-                        getFieldDecorator('password', {
+                        getFieldDecorator('pwd', {
                             rules: [
                                 {required: true, message: '请输入密码'}
                             ]
