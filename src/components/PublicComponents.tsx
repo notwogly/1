@@ -48,6 +48,9 @@ export class NavigationBar extends Component<BarProps> {
                 <Menu.Item key="study">
                     <Icon type="eye-o" />单词学习
                 </Menu.Item>
+                <Menu.Item key="learningCheck">
+                    <Icon type="check-circle-o" />复习
+                </Menu.Item>
                 <Menu.Item key="vocabBook">
                     <Icon type="book" />单词书
                 </Menu.Item>

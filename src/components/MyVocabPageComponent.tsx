@@ -40,6 +40,7 @@ export  default class MyVocabComponent extends Component<MyVocabProps, viewState
         this.callback = this.callback.bind(this);
         this.handleSubmit1 = this.handleSubmit1.bind(this);
         this.handleSubmit2 = this.handleSubmit2.bind(this);
+        this.handleSubmit3 = this.handleSubmit3.bind(this);
         this.onSelectChange = this.onSelectChange.bind(this);
     }
 
@@ -60,6 +61,12 @@ export  default class MyVocabComponent extends Component<MyVocabProps, viewState
         this.props.dispatch({type: 'myvocab/clearMyVocab', payload: true});
         this.setState({refresh: true});
 
+    }
+
+    handleSubmit3 = (e) => {
+        e.preventDefault();
+        this.props.dispatch({type: 'study/jumpDetail', payload: {vocabId: selectedVocab.id }});
+        this.setState({ selectedRowKeys:[]});
     }
 
     onSelectChange(selectedRowKeys) {
@@ -123,6 +130,11 @@ export  default class MyVocabComponent extends Component<MyVocabProps, viewState
                 </Tabs>
                 <Row type="flex" justify="center" style={{ margin: '12px' }}>
                     <Col style={{marginBottom: '10px'}}>
+                        <Button
+                            icon="smile"
+                            htmlType="submit"
+                            onClick={this.handleSubmit3}>查看详情
+                        </Button>
                         <Button
                             icon="cross"
                             htmlType="submit"

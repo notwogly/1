@@ -1,7 +1,7 @@
 
 import {Component, FormEvent, ReactNode} from 'react';
 import * as React from 'react';
-import {Icon, Form, Button, Input, message} from 'antd';
+import {Icon, Form, Button, Input, message, Select} from 'antd';
 import DvaProps from '../types/DvaProps';
 
 const FormItem = Form.Item;
@@ -47,7 +47,8 @@ export default class RegisterForm extends Component<FormProps, RegisterFormData>
                     {
                         getFieldDecorator('email', {
                             rules: [
-                                {required: true, message: '请输入邮箱'}
+                                {required: true, message: '请输入邮箱'},
+                                {pattern: /^[a-zA-Z0-9]+@[a-zA-Z0-9]+.com$/, message:'请输入符合格式要求的邮箱'}
                             ]
                         })(
                             <Input prefix={<Icon type="mail" style={{fontSize: 13}}/>}/>
@@ -58,7 +59,8 @@ export default class RegisterForm extends Component<FormProps, RegisterFormData>
                     {
                         getFieldDecorator('pwd', {
                             rules: [
-                                {required: true, message: '请输入密码'}
+                                {required: true, message: '请输入密码'},
+                                {pattern: /^[a-zA-Z0-9]{6}[a-zA-Z0-9]?$/, message:'请输入至少六个字符'}
                             ]
                         })(
                             <Input prefix={<Icon type="unlock" style={{fontSize: 13}}/>}/>

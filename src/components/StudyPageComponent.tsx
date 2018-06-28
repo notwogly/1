@@ -34,7 +34,7 @@ export  default class StudyComponent extends Component<StudyProps, ViewState> {
         e.preventDefault();
         this.props.dispatch({type:'study/changeVocabFromNewVocabToMastered',payload: (this.props.dataSource.id)});
         this.props.dispatch({type:'vocablearninginfo/getTodayVocabNum',payload: true});
-        this.props.dispatch({type:'study/jumpDetail',payload: {vocabId:this.props.dataSource.id, vocabState: true}});
+        this.props.dispatch({type:'study/jumpDetail',payload: {vocabId:this.props.dataSource.id}});
     }
 
     handleSubmit2 = (e) => {
@@ -45,13 +45,13 @@ export  default class StudyComponent extends Component<StudyProps, ViewState> {
     handleOk() {
         this.setState({modalState: false,});
         this.props.dispatch({type:'study/changeVocabFromNewVocabToMastered',payload: (this.props.dataSource.id)});
-        this.props.dispatch({type:'study/jumpDetail',payload:{vocabId:this.props.dataSource.id, vocabState: true}});
+        this.props.dispatch({type:'study/jumpDetail',payload:{vocabId:this.props.dataSource.id}});
     };
 
     handleCancel(e) {
         this.setState({modalState: false,});
         this.props.dispatch({type:'study/changeVocabFromNewVocabToLearning',payload: (this.props.dataSource.id)});
-        this.props.dispatch({type:'study/jumpDetail',payload:{vocabId:this.props.dataSource.id, vocabState: false}});
+        this.props.dispatch({type:'study/jumpDetail',payload:{vocabId:this.props.dataSource.id}});
     };
 
     render() {

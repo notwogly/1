@@ -16,12 +16,13 @@ import { PublicHeader, PublicFooter } from './components/PublicComponents';
 import LoginPageComponent from './components/LoginPageComponent';
 import RegisterPageComponent from './components/RegisterPageComponent';
 import DashboardPageComponent from './components/DashboardPageComponent';
-import StudyPageComponent from './components/StudyPageComponent';
+import StudyComponent from './components/StudyPageComponent';
 import VocabProgressPageCompoent from './components/VocabProgressPageComponent';
 import SettingPageComponent from './components/SettingPageComponent';
 import VocabBookComponent from './components/VocabBookComponent';
 import MyVocabComponent from './components/MyVocabPageComponent';
 import VocabDetailComponent from './components/VocabDetailPageComponent';
+import LearningCheckCompoent from './components/LearningCheckPageComponent';
 
 const { Content } = Layout;
 
@@ -43,7 +44,10 @@ const DashboardPage = connect(state => {
 })(DashboardPageComponent);
 const StudyPage = connect(state => {
     return {dataSource:state.study.vocabDetail, todayVocabNum: state.vocablearninginfo.todayVocabNum};
-})(StudyPageComponent);
+})(StudyComponent);
+const LearningCheckPage = connect(state => {
+    return {dataSource:state.study.vocabDetail, todayVocabNum: state.vocablearninginfo.todayVocabNum};
+})(LearningCheckCompoent);
 const VocabDetail = connect(state => {
     return {vocabDetail: state.study.vocabDetail};
 })(VocabDetailComponent);
@@ -72,6 +76,7 @@ app.router(({ history }) => (
 
                     <AuthRoute path="/dashboard" component={DashboardPage} />
                     <AuthRoute path="/study" component={StudyPage} />
+                    <AuthRoute path="/learningCheck" component={LearningCheckPage} />
                     <AuthRoute path="/vocabDetail" component={VocabDetail} />
                     <AuthRoute path="/vocabProgress" component={VocabProgressPage} />
                     <AuthRoute path="/setting" component={Setting} />
