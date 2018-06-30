@@ -87,6 +87,7 @@ const MySettingModel = {
                 type: 'updateDailyNum',
                 payload: {dailyNum: payload.payload,}
             });
+            message.success("修改成功");
             return;
         },
         * modifyUserInfo(payload: {payload:{username: string, gender: string, intro: string}}, {call, put}) {
@@ -108,6 +109,7 @@ const MySettingModel = {
                 type: 'updateUserInfo',
                 payload: {userInfo: body}
             });
+            message.success("修改成功");
             return;
         },
     }

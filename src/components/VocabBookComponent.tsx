@@ -19,7 +19,6 @@ var initBookIntro = '';
 var confirmData = {id: '', bookName: '',totalVocabNumber: ''};
 
 interface VocabBookProps extends DvaProps {
-    form: any;
     learningBook: any;
     dataSource: any;
 }
@@ -44,14 +43,8 @@ class SearchForm extends Component<VocabBookProps,ViewState> {
 
     handleSubmit1 = (e) => {
         e.preventDefault();
-        const formProps = this.props.form;
-        formProps.validateFieldsAndScroll((err: any, values: string) => {
-            if (err) {
-                return;
-            }
-            this.props.dispatch({type: 'vocablearninginfo/getVocabBooks', payload: values});
-            this.setState({refresh:true});
-        });
+        this.props.dispatch({type: 'vocablearninginfo/getBookVocabs', payload: confirmData});
+        this.props.dispatch({type: 'vocablearninginfo/jump',payload:{direction:'bookDetail'}});
     }
 
     handleSubmit2 = (e) => {
@@ -70,7 +63,6 @@ class SearchForm extends Component<VocabBookProps,ViewState> {
     };
 
     render() {
-        const {getFieldDecorator} = this.props.form;
         initBookIntro = this.props.learningBook.bookIntro;
         initBookName = this.props.learningBook.bookName;
         initData = this.props.dataSource;
@@ -85,37 +77,6 @@ class SearchForm extends Component<VocabBookProps,ViewState> {
                         </Col>
                     </Row>
                 </div>
-                <Form layout={"inline"} style={{background: "#ffffff", paddingLeft: 20, textAlign: 'center'}}>
-                    <FormItem label="搜索单词书">
-                        {
-                            getFieldDecorator('bookName', {})(
-                                <Input placeholder="请输入单词书" style={{width: 200}}/>)
-                        }
-                    </FormItem>
-                    <FormItem>
-                        <Button
-                            icon="search"
-                            type="primary"
-                            htmlType="submit"
-                            onClick={this.handleSubmit1}>搜索
-                        </Button>
-                    </FormItem>
-                    <FormItem>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            onClick={this.handleSubmit2}>选择
-                        </Button>
-                    </FormItem>
-                    <Modal title="修改成功" visible={this.state.modalState}
-                           onOk={this.handleOk} onCancel={this.handleCancel}>
-                        <br/>
-                        <p> 书名: {confirmData.bookName}</p>
-                        <br/>
-                        <p> 单词数: {confirmData.totalVocabNumber}</p>
-                        <br/>
-                    </Modal>
-                </Form>
                 <Table
                     style={{width: "100%", background: "#ffffff"}}
                     columns={columns}
@@ -128,6 +89,44 @@ class SearchForm extends Component<VocabBookProps,ViewState> {
                         },
                     }}
                     dataSource={initData}/>
+                <Form layout={"inline"} style={{background: "#ffffff", paddingLeft: 20, textAlign: 'center'}}>
+                    {/*<FormItem label="搜索单词书">*/}
+                    {/*{*/}
+                    {/*getFieldDecorator('bookName', {})(*/}
+                    {/*<Input placeholder="请输入单词书" style={{width: 200}}/>)*/}
+                    {/*}*/}
+                    {/*</FormItem>*/}
+                    {/*<FormItem>*/}
+                    {/*<Button*/}
+                    {/*icon="search"*/}
+                    {/*type="primary"*/}
+                    {/*htmlType="submit"*/}
+                    {/*onClick={this.handleSubmit1}>搜索*/}
+                    {/*</Button>*/}
+                    {/*</FormItem>*/}
+                    <FormItem>
+                        <Button
+                            icon="book"
+                            htmlType="submit"
+                            onClick={this.handleSubmit1}>查看详情
+                        </Button>
+                    </FormItem>
+                    <FormItem>
+                        <Button
+                            icon="edit"
+                            htmlType="submit"
+                            onClick={this.handleSubmit2}>修改至该单词集
+                        </Button>
+                    </FormItem>
+                    <Modal title="修改成功" visible={this.state.modalState}
+                           onOk={this.handleOk} onCancel={this.handleCancel}>
+                        <br/>
+                        <p> 书名: {confirmData.bookName}</p>
+                        <br/>
+                        <p> 单词数: {confirmData.totalVocabNumber}</p>
+                        <br/>
+                    </Modal>
+                </Form>
                 <br/>
             </div>
         );

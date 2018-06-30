@@ -62,6 +62,11 @@ const MyVocabModel = {
             var userId = (yield  call(loadSession)).id;
             var  vocabId = payload.payload.value.id;
             var  type = payload.payload.key;
+            if(payload.payload.key == 1)
+            {
+                message.error('今日单词不可删除');
+                return;
+            }
             if(type == 2)
             {
                 const response = yield call(authFetch, '/user/deleteVocab/'+userId, 'DELETE',{ vocabId: vocabId, type: parseInt(type.toString())} );

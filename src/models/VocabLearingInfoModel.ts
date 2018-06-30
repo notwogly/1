@@ -8,6 +8,8 @@ const VocabLearningInfoModel = {
     namespace: 'vocablearninginfo',
     state: {
         vocabBooks: [{id: '', bookName: '',totalVocabNumber: ''},],
+        bookName:'',
+        book_vocabs: [{id: '', word:'', interpretation:'', exampleSen:''},],
         learningBook: { id: '', bookName: '',  bookIntro: '',},
         UserVocabNum: { totalNum: '', mastered: '', learning: '', newVocab: '', dailyNum: ''},
         todayVocabNum: { dailyNum: '', newVocab: '', learning:'', mastered:'' },
@@ -23,6 +25,9 @@ const VocabLearningInfoModel = {
             return {...st, ...payload.payload};
         },
         updateTodayVocabNumInfo(st, payload) {
+            return {...st, ...payload.payload};
+        },
+        updateBookVocabsInfo(st, payload) {
             return {...st, ...payload.payload};
         }
     },
@@ -46,7 +51,7 @@ const VocabLearningInfoModel = {
                 if (pathname === '/vocabBook') {
                     dispatch({ type: 'getVocabBooks', payload: ''});
                     dispatch({ type: 'getLearningBook', payload: true});
-                }
+                };
             });
         }
     },
@@ -162,8 +167,39 @@ const VocabLearningInfoModel = {
             });
             return;
         },
+        * getBookVocabs(payload: {payload:{id:number, bookName: string} }, {call, put}) {
+            console.log(payload.payload);
+            if(payload.payload.id <0 )
+            {
+                yield put({
+                    type: 'updateBookVocabsInfo',
+                    payload: {book_vocabs: [{},]}
+                });
+                return;
+            }
+            const response = yield call(authFetch, '/book/vocabs/'+payload.payload.id, 'GET');
+            if(response.status === 400){
+                message.error('获取书中所有单词失败');
+                return;
+            }
+            const jsonBody = yield call(response.text.bind(response));
+            if(jsonBody.length === 0)
+            {
+                message.error('获取书中所有单词失败');
+                return;
+            }
+            //将字符串转换为json对象
+            const body = JSON.parse(jsonBody);
+            //console.log(body);
+            yield put({
+                type: 'updateBookVocabsInfo',
+                payload: {book_vocabs: body,bookName: payload.payload.bookName}
+            });
+            return;
+        },
         *jump(payload: {payload:{direction: string}},{call,put}){
             const direction = payload.payload.direction;
+            //console.log(direction);
             yield put(routerRedux.push("/"+direction));
             return;
         }

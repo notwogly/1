@@ -7,9 +7,6 @@ import { Link } from 'dva/router';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
-const success = function () {
-    message.success('修改每日学习量成功');
-};
 
 export interface SettingFormProps extends DvaProps {
     form: any;
@@ -27,7 +24,6 @@ export  class VocabSettingForm extends Component<SettingFormProps> {
     handleChange(value) {
         //console.log(value);
         this.props.dispatch({type: 'mysetting/modifyDailyNum', payload: value});
-        success();
     };
 
     render() {

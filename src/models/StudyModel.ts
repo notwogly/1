@@ -39,7 +39,7 @@ const StudyModel = {
                 const jsonBody = yield call(response.text.bind(response));
                 if(jsonBody.length === 0)
                 {
-                    message.info('获取单词信息失败您或许已经完成今日学习');
+                    message.info('获取单词信息失败您可能已经完成今日学习或请先设置当前学习的单词集');
                     yield put({
                         type: 'updateVocabDetail',
                         payload: {vocabDetail: {id: '', word: '',interpretation: '', exampleSen:''},}

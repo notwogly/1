@@ -17,7 +17,7 @@ export default class DashboardPageComponent extends Component<DashBoardProps> {
         percent = (this.props.todayVocabNum.learning+this.props.todayVocabNum.mastered)*100/this.props.todayVocabNum.dailyNum;
         return (
             <div >
-                <NavigationBar current={"Dashboard"} dispatch={this.props.dispatch}/>
+                <NavigationBar current={"dashboard"} dispatch={this.props.dispatch}/>
                 <br/>
                 <Carousel >
                     <div style={{ margin: 'auto'}}>

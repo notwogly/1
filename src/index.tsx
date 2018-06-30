@@ -10,6 +10,8 @@ import MyVocabModel from './models/MyVocabModel';
 import StudyModel from './models/StudyModel';
 import VocabLearningInfo from './models/VocabLearingInfoModel';
 import MySetting from './models/MySettingModel';
+import UserDailyRecord from './models/UserDailyRecordModel';
+import UserCheck from './models/UserCheckModel';
 
 import AuthRoute from './components/AuthRoute';
 import { PublicHeader, PublicFooter } from './components/PublicComponents';
@@ -23,6 +25,8 @@ import VocabBookComponent from './components/VocabBookComponent';
 import MyVocabComponent from './components/MyVocabPageComponent';
 import VocabDetailComponent from './components/VocabDetailPageComponent';
 import LearningCheckCompoent from './components/LearningCheckPageComponent';
+import BookDetailComponent from "./components/BookDetailComponent";
+import CheckComponent from './components/CheckPageComponent';
 
 const { Content } = Layout;
 
@@ -36,6 +40,8 @@ app.model(MyVocabModel);
 app.model(StudyModel);
 app.model(VocabLearningInfo);
 app.model(MySetting);
+app.model(UserDailyRecord);
+app.model(UserCheck);
 
 const LoginPage = connect(state => { return {}; })(LoginPageComponent);
 const RegisterPage = connect(state => { return {}; })(RegisterPageComponent);
@@ -48,11 +54,14 @@ const StudyPage = connect(state => {
 const LearningCheckPage = connect(state => {
     return {dataSource:state.study.vocabDetail, todayVocabNum: state.vocablearninginfo.todayVocabNum};
 })(LearningCheckCompoent);
+const CheckPage = connect(state => {
+    return {dataSource:state.check.userCheck, vocabDetail: state.check.checkVocabDetail, rightSelection: state.check.rightNum};
+})(CheckComponent);
 const VocabDetail = connect(state => {
     return {vocabDetail: state.study.vocabDetail};
 })(VocabDetailComponent);
 const VocabProgressPage = connect(state => {
-    return {dataSource: state.vocablearninginfo.UserVocabNum, bookName: state.vocablearninginfo.learningBook.bookName};
+    return {dataSource: state.vocablearninginfo.UserVocabNum, bookName: state.vocablearninginfo.learningBook.bookName, userDailyRecord: state.dailyRecord.userDailyRecord};
 })(VocabProgressPageCompoent);
 const Setting = connect(state => {
     return {userInfo: state.mysetting.userInfo, bookName: state.vocablearninginfo.learningBook.bookName, dailyNum: state.mysetting.dailyNum};
@@ -63,6 +72,9 @@ const VocabBook = connect(state => {
 const MyVocab = connect(state => {
     return {dataSource: state.myvocab.dataSource};
 })(MyVocabComponent);
+const BookDetailPage = connect(state => {
+    return {dataSource: state.vocablearninginfo.book_vocabs, bookName: state.vocablearninginfo.bookName};
+})(BookDetailComponent);
 
 app.router(({ history }) => (
     <Router history={history}>
@@ -82,6 +94,8 @@ app.router(({ history }) => (
                     <AuthRoute path="/setting" component={Setting} />
                     <AuthRoute path="/vocabBook" component={VocabBook} />
                     <AuthRoute path="/myVocab" component={MyVocab} />
+                    <AuthRoute path="/bookDetail" component={BookDetailPage} />
+                    <AuthRoute path="/check" component={CheckPage} />
 
                 </Switch>
             </Content>

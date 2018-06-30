@@ -45,11 +45,17 @@ export class NavigationBar extends Component<BarProps> {
             <Menu onClick={this.handleClick}
                   selectedKeys={[this.props.current]}
                   mode="horizontal">
+                <Menu.Item key="dashboard">
+                    <Icon type="pushpin-o" />首页
+                </Menu.Item>
                 <Menu.Item key="study">
                     <Icon type="eye-o" />单词学习
                 </Menu.Item>
                 <Menu.Item key="learningCheck">
                     <Icon type="check-circle-o" />复习
+                </Menu.Item>
+                <Menu.Item key="check">
+                    <Icon type="check-circle" />考核
                 </Menu.Item>
                 <Menu.Item key="vocabBook">
                     <Icon type="book" />单词书
@@ -62,6 +68,9 @@ export class NavigationBar extends Component<BarProps> {
                 </Menu.Item>
                 <Menu.Item key="setting">
                     <Icon type="setting" />设置
+                </Menu.Item>
+                <Menu.Item key="login">
+                    <Icon type="login" />退出登陆
                 </Menu.Item>
             </Menu>
         );

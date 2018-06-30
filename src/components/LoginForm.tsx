@@ -35,24 +35,25 @@ export class LoginForm extends Component<FormProps, LoginFormData> {
         const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
             labelCol: {
-                xs: {span: 24},
+                xs: {span: 20},
                 sm: {span: 6},
             },
             wrapperCol: {
                 xs: {span: 24},
-                sm: {span: 14},
+                sm: {span: 10},
             },
         };
         return (
-            <Form onSubmit={this.handleSubmit} style={{textAlign: 'center', marginTop: '100px'}}>
-                <FormItem label="邮箱" {...formItemLayout} hasFeedback>
+            <Form  style ={{textAlign: 'center', height: '100%'}}
+                onSubmit={this.handleSubmit}>
+                <FormItem label="邮箱"  style={{ paddingTop: '100px'}}{...formItemLayout} hasFeedback>
                     {
                         getFieldDecorator('email', {
                             rules: [
                                 {required: true, message: '请输入邮箱'}
                             ]
                         })(
-                            <Input prefix={<Icon type="user" style={{fontSize: 13}}/>}/>
+                            <Input prefix={<Icon type="user" style={{fontSize: 20}}/>}/>
                         )
                     }
                 </FormItem>
@@ -63,15 +64,15 @@ export class LoginForm extends Component<FormProps, LoginFormData> {
                                 {required: true, message: '请输入密码'}
                             ]
                         })(
-                            <Input type="password" prefix={<Icon type="unlock" style={{fontSize: 13}}/>}/>
+                            <Input type="password" prefix={<Icon type="unlock" style={{fontSize: 20}}/>}/>
                         )
                     }
                 </FormItem>
-                <FormItem {...formItemLayout}>
-                    <Button icon="copy" type="primary" htmlType="submit">登录</Button>
+                <FormItem >
+                    <Button icon="copy" type="primary" htmlType="submit" style={{alignItems: 'center'}}>登录</Button>
                 </FormItem>
-                <FormItem {...formItemLayout}>
-                    <Button><Link to="/register">注册新用户</Link></Button>
+                <FormItem >没有账号？
+                    <Link to="/register" style={{alignItems: 'center'}}>注册新账号</Link>
                 </FormItem>
             </Form>
         );
